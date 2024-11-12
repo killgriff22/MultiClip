@@ -116,7 +116,7 @@ async def on_message(message: discord.Message):
         case '!c' | '!clear' | '!stop' | '!end':
             vc.stop()
             queue = []
-            update_queue()
+            update_queue(queue)
         case '!skip' | '!next':
             vc.stop()
             queue.pop(0)
@@ -167,7 +167,7 @@ async def on_message(message: discord.Message):
                 for i, file in enumerate(files.copy()):
                     files[i] = os.path.join(Discord_path, file)
                 queue += files
-                update_queue()
+                update_queue(queue)
             elif paused:
                 vc.resume()
                 paused = False
@@ -211,6 +211,15 @@ async def queue_loop():  # manages the queue
     music_channel = user.get_guild(
         1173496575771807805).get_channel(1174005255189569587)
     while queue:  # while we have a queue, play the first item from the queue
+        if not os.path.exists(queue[0]):
+            path = queue[0].split("/")[-1]
+            path = os.path.join(music_library,path)
+            queue[0] = path
+            update_queue(queue)
+        if not os.path.exists(queue[0]):
+            queue.pop(0)
+            update_queue(queue)
+            continue
         if not vc.is_playing():
             vc.play(discord.FFmpegPCMAudio(executable=ffmpeg_path,
                     source=queue[0]))
@@ -219,10 +228,10 @@ async def queue_loop():  # manages the queue
             continue
         if not loop:  # if we arent looping, remove the file, and the entry, then update the queue file
             queue.pop(0)
-            #update_queue()
+            update_queue(queue)
         else:  # otherwise, send the firs item to the back and update the queue file
             queue.append(queue.pop(0))
-            #update_queue()
+            update_queue(queue)
     # when the queue is empty, say it!
     await music_channel.send("Queue has ended")
 
