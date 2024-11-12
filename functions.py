@@ -217,6 +217,7 @@ async def queue_loop():  # manages the queue
             queue[0] = path
             update_queue(queue)
         if not os.path.exists(queue[0]):
+            await music_channel.send(f"{queue[0]} has been removed for a bad path!")
             queue.pop(0)
             update_queue(queue)
             continue
