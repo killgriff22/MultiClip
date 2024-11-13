@@ -243,7 +243,7 @@ async def queue_loop():  # manages the queue
             if not vc.is_playing():
                 vc.play(discord.FFmpegPCMAudio(executable=ffmpeg_path,
                         source=queue[0]))
-                await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.')[0]}")
+                await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.mp3')[0]}")
                 while not vc.is_playing:
                     await asyncio.sleep(0.1)
                 while vc.is_playing():
