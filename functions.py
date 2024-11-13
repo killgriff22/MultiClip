@@ -102,10 +102,16 @@ async def on_message(message: discord.Message):
             if len(desc) > limit:
                 #split the content
                 _desc = desc.split("\n")[:-1]
+                if len(split) == 2:
+                    page = int(split[1])-1
+                else:
+                    page = 0
                 while _desc:
                     __desc = []
                     [__desc.append(line) if (not sum([len(i) for i in __desc])+len(line)+len(__desc)+1> limit) else None for line in _desc]
                     [_desc.pop(_desc.index(line)) for line in __desc]
+                    pagenumber=len("\n".join(__desc))//limit
+                    print(pagenumber)
                     await message.channel.send(
                     embed=discord.Embed(
                         title="QUEUE",
