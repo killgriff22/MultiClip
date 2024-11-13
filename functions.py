@@ -120,6 +120,7 @@ async def on_message(message: discord.Message):
         case '!skip' | '!next':
             vc.stop()
             queue.pop(0)
+            update_queue(queue)
         case '!loop' | '!l':
             loop = not loop
             await message.reply(f"loop {'on' if loop else 'off'}")
