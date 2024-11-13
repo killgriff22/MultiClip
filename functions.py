@@ -110,15 +110,15 @@ async def on_message(message: discord.Message):
                     __desc = []
                     [__desc.append(line) if (not sum([len(i) for i in __desc])+len(line)+len(__desc)+1> limit) else None for line in _desc]
                     [_desc.pop(_desc.index(line)) for line in __desc]
-                    pagenumber=len("\n".join(__desc))//limit
                     print(pagenumber)
                     await message.channel.send(
                     embed=discord.Embed(
                         title="QUEUE",
                         color=discord.Color.blurple(),
                         description="\n".join(__desc)
+                        )
                     )
-                )
+                    pagenumber=len(desc)//len("\n".join(__desc))
             else:
                 await message.channel.send(
                     embed=discord.Embed(
