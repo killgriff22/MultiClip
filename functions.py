@@ -211,31 +211,35 @@ async def queue_loop():  # manages the queue
     music_channel = user.get_guild(
         1173496575771807805).get_channel(1174005255189569587)
     while queue:  # while we have a queue, play the first item from the queue
-        if not os.path.exists(queue[0]):
-            path = queue[0].split("/")[-1]
-            path = os.path.join(music_library,path)
-            queue[0] = path
-            update_queue(queue)
-        if not os.path.exists(queue[0]):
-            await music_channel.send(f"{queue[0]} has been removed for a bad path!")
-            queue.pop(0)
-            update_queue(queue)
-            continue
-        if not vc.is_playing():
-            vc.play(discord.FFmpegPCMAudio(executable=ffmpeg_path,
-                    source=queue[0]))
-            await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.')[0]}")
-        else:
-            continue
-        if not loop:  # if we arent looping, remove the file, and the entry, then update the queue file
-            queue.pop(0)
-            update_queue(queue)
-        else:  # otherwise, send the firs item to the back and update the queue file
-            queue.append(queue.pop(0))
-            update_queue(queue)
-    # when the queue is empty, say it!
+        try:
+            queue = read_queue()
+            if not os.path.exists(queue[0]):
+                path = queue[0].split("/")[-1]
+                path = os.path.join(music_library,path)
+                queue[0] = path
+                update_queue(queue)
+            if not os.path.exists(queue[0]):
+                await music_channel.send(f"{queue[0]} has been removed for a bad path!")
+                queue.pop(0)
+                update_queue(queue)
+                continue
+            if not vc.is_playing():
+                vc.play(discord.FFmpegPCMAudio(executable=ffmpeg_path,
+                        source=queue[0]))
+                await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.')[0]}")
+            else:
+                continue
+            if not loop:  # if we arent looping, remove the file, and the entry, then update the queue file
+                queue.pop(0)
+                update_queue(queue)
+            else:  # otherwise, send the firs item to the back and update the queue file
+                queue.append(queue.pop(0))
+                update_queue(queue)
+        # when the queue is empty, say it!
+        except Exception as e:
+            print("ignoring exception")
+            print(e)
     await music_channel.send("Queue has ended")
-
 
 @tasks.loop(seconds=4)
 async def instance_loop():
