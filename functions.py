@@ -62,6 +62,11 @@ async def on_message(message: discord.Message):
         match split[0]:
             case '!logout':
                 await user.close()
+                queue_loop.cancel()
+                instance_loop.cancel()
+                status.cancel()
+                user_prompt_timeout.cancel()
+                exit()
             case '!lookup':
                 search_terms = split[1:]
                 await message.channel.send(f"searching for {' '.join(split[1:])}")
