@@ -97,14 +97,30 @@ async def on_message(message: discord.Message):
                     queue.pop(int(index)-1 if int(index)-1 < 0 else int(index))
         case '!queue' | '!q':
             desc = "".join(
-                [f"{i}: {file.split('/')[-1].split('.')[0]}\n" for i, file in enumerate(queue)])
-            await message.channel.send(
-                embed=discord.Embed(
-                    title="QUEUE",
-                    color=discord.Color.blurple(),
-                    description=desc
+                [f"{i}: {file.split('/')[-1].split('.mp3')[0]}\n" for i, file in enumerate(queue)])
+            limit=2000
+            if len(desc) > limit:
+                #split the content
+                _desc = desc.split("\n")[:-1]
+                while _desc:
+                    __desc = []
+                    [__desc.append(line) if (not sum([len(i) for i in __desc])+len(line)+len(__desc)+1> limit) else None for line in _desc]
+                    [_desc.pop(_desc.index(line)) for line in __desc]
+                    await message.channel.send(
+                    embed=discord.Embed(
+                        title="QUEUE",
+                        color=discord.Color.blurple(),
+                        description="\n".join(__desc)
+                    )
                 )
-            )
+            else:
+                await message.channel.send(
+                    embed=discord.Embed(
+                        title="QUEUE",
+                        color=discord.Color.blurple(),
+                        description=desc
+                    )
+                )
         case '!pause' | '!paws':
             if not paused:
                 vc.pause()
