@@ -227,8 +227,10 @@ async def queue_loop():  # manages the queue
                 vc.play(discord.FFmpegPCMAudio(executable=ffmpeg_path,
                         source=queue[0]))
                 await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.')[0]}")
-            else:
-                asyncio.sleep(0.1)
+                while not vc.is_playing:
+                    asyncio.sleep(0.1)
+                while vc.is_playing():
+                    asyncio.sleep(0.1)
             if not loop:  # if we arent looping, remove the file, and the entry, then update the queue file
                 queue.pop(0)
                 update_queue(queue)
