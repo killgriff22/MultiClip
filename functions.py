@@ -228,7 +228,7 @@ async def queue_loop():  # manages the queue
                         source=queue[0]))
                 await music_channel.send(f"Now playing {queue[0].split('/')[-1].split('.')[0]}")
             else:
-                continue
+                asyncio.sleep(0.1)
             if not loop:  # if we arent looping, remove the file, and the entry, then update the queue file
                 queue.pop(0)
                 update_queue(queue)
